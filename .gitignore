@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled class file
 *.class
 
@@ -23,3 +24,9 @@
 hs_err_pid*
 
 .idea
+=======
+# Default ignored files
+.idea
+*.iml
+/out
+>>>>>>> 40323f1 (ignore .idea and adding HomeWork.java)
