@@ -14,37 +14,44 @@ public class Quiz {
                     "Память для ссылочного типа", "Коэффицент вариации"}
     };
     private static final int[] INDEX_OF_CORRECT_ANSWERS = new int[]{3, 4, 4};
+    private static int userAnswer = 0;
     private static int indexOfQuestion = 0;
     private static int counterOfCorrectAnswers = 0;
 
     public static void main(String[] args) {
-        Quiz quiz = new Quiz();
-        quiz.startQuiz();
+        try (Scanner user = new Scanner(System.in)) {
+            Quiz quiz = new Quiz();
+            quiz.startQuiz(user);
+        }
     }
 
-    public void startQuiz() {
+    public void startQuiz(Scanner user) throws RuntimeException {
         try {
-            for (int i = 0; i < QUESTIONS.length; i++) {
+            for (int i = indexOfQuestion; i < QUESTIONS.length; i++) {
                 showQuestion();
-                showAnswers();
-                checkAnswer(getUserAnswer());
+                for (int j = 0; j < ANSWERS[i].length; j++) {
+                    String answers = String.format("%d. %s", j + 1, ANSWERS[i][j]);
+                    System.out.println(answers);
+                }
+                setUserAnswer(user);
+                checkAnswer();
+                if (userAnswer <= 0) {
+                    throw new RuntimeException();
+                }
             }
-            checkResult();
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Вы ввели отрицательное число, Викторина окончена!");
+        } catch (RuntimeException e) {
+            System.out.println("Введено неверное значение, Викторина окончена");
         } finally {
+            checkResult();
             restartCounters();
         }
     }
 
-    private int getUserAnswer() {
-        Scanner user = new Scanner(System.in);
+    private void setUserAnswer(Scanner user) {
         if (user.hasNextInt()) {
-            return user.nextInt();
+            userAnswer = user.nextInt();
         } else {
-            System.out.println("Введённое значение не является числом, попробуйте ещё раз!");
-            System.out.println("Если хотите прервать Викторину, введите отрицательное число.");
-            return 0;
+            userAnswer = 0;
         }
     }
 
@@ -52,33 +59,17 @@ public class Quiz {
         System.out.println(QUESTIONS[indexOfQuestion]);
     }
 
-    private void showAnswers() {
-        for (int i = indexOfQuestion; i < indexOfQuestion + 1; i++) {
-            for (int j = 0; j < ANSWERS[i].length; j++) {
-                String answers = String.format("%d. %s", j + 1, ANSWERS[i][j]);
-                System.out.println(answers);
-            }
-        }
-    }
-
-    private void checkAnswer(int userAnswer) {
-        if (userAnswer < 0) {
-            indexOfQuestion = QUESTIONS.length;
-        }
-        if (userAnswer == 0) {
-                checkAnswer(getUserAnswer());
+    private void checkAnswer() {
+        if (userAnswer == INDEX_OF_CORRECT_ANSWERS[indexOfQuestion]) {
+            System.out.println("Ваш ответ правильный!");
+            counterOfCorrectAnswers++;
         } else {
-            if (userAnswer == INDEX_OF_CORRECT_ANSWERS[indexOfQuestion]) {
-                System.out.println("Ваш ответ правильный!");
-                counterOfCorrectAnswers++;
-            } else {
-                System.out.println("Ваш ответ не является верным!");
-            }
-            indexOfQuestion++;
+            System.out.println("Ваш ответ не является верным!");
         }
+        indexOfQuestion++;
     }
 
-    private void checkResult(){
+    private void checkResult() {
         if (counterOfCorrectAnswers != 3) {
             System.out.printf("Вы ответили правильно на %d вопросов! У вас %d ошибок.",
                     counterOfCorrectAnswers, 3 - counterOfCorrectAnswers);
@@ -87,8 +78,9 @@ public class Quiz {
         }
     }
 
-    private void restartCounters(){
+    private void restartCounters() {
         indexOfQuestion = 0;
         counterOfCorrectAnswers = 0;
+        userAnswer = 0;
     }
 }
