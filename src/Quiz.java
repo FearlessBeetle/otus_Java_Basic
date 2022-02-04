@@ -25,7 +25,7 @@ public class Quiz {
         }
     }
 
-    public void startQuiz(Scanner user) throws RuntimeException {
+    public void startQuiz(Scanner user) {
         try {
             for (int i = indexOfQuestion; i < QUESTIONS.length; i++) {
                 showQuestion();
@@ -35,14 +35,11 @@ public class Quiz {
                 }
                 setUserAnswer(user);
                 checkAnswer();
-                if (userAnswer <= 0) {
-                    throw new RuntimeException();
-                }
             }
+            checkResult();
         } catch (RuntimeException e) {
             System.out.println("Введено неверное значение, Викторина окончена");
         } finally {
-            checkResult();
             restartCounters();
         }
     }
@@ -59,7 +56,10 @@ public class Quiz {
         System.out.println(QUESTIONS[indexOfQuestion]);
     }
 
-    private void checkAnswer() {
+    private void checkAnswer() throws RuntimeException{
+        if (userAnswer <= 0) {
+            throw new RuntimeException();
+        }
         if (userAnswer == INDEX_OF_CORRECT_ANSWERS[indexOfQuestion]) {
             System.out.println("Ваш ответ правильный!");
             counterOfCorrectAnswers++;
