@@ -1,4 +1,4 @@
-package QuizInClasses;
+package quizinclasses;
 
 class Questions {
     private final String[] QUESTIONS = new String[]{
