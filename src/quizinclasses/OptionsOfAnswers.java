@@ -1,4 +1,4 @@
-package QuizInClasses;
+package quizinclasses;
 
 class OptionsOfAnswers {
     private final String[][] ANSWERS = new String[][]{

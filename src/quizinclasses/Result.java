@@ -1,4 +1,4 @@
-package QuizInClasses;
+package quizinclasses;
 
 class Result {
     private int numberOfCorrectAnswers = 0;

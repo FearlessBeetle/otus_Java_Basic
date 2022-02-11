@@ -1,4 +1,4 @@
-package QuizInClasses;
+package quizinclasses;
 
 import java.util.Scanner;
 
