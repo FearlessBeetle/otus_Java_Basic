@@ -1,64 +1,48 @@
 package banksystem;
 
-import java.util.*;
+
+import java.util.Objects;
 
 
 class Account {
-    private HashMap<Integer, Integer> clientAccounts = new HashMap<>();
+    private int accountNumber = (int)((Math.random() * 1000000) + hashCode());
+    private int value;
 
-    Account(int account, int coinValue) {
-        if (account <= 0) {
-            clientAccounts.put(-account, coinValue);
+    public Account(int value) {
+        if (value <= 0) {
+            throw new WrongInputException("Некорректный счёт клиента или денежная сумма равна нулю");
         } else {
-            clientAccounts.put(account, coinValue);
+        this.value = value;
         }
     }
 
-    int getValueOfAccount(int accountNumber) {
-        return clientAccounts.get(accountNumber);
-    }
-
-    void addNewAccountForClient(int coinValue) throws RuntimeException {
-        try {
-        if (coinValue < 0) {
-            throw new RuntimeException("Значение вносимое на счёт не может быть отрицательным");
+    public Account(int value, int accountNumber) {
+        if (accountNumber <= 0 && value <= 0) {
+            throw new WrongInputException("Некорректный счёт клиента или денежная сумма равна нулю");
         } else {
-            clientAccounts.putIfAbsent(
-                    (int) (Math.random() * Integer.MAX_VALUE),   // K рандомный ключ для нового счёта
-                    coinValue);                                  // V Вводимое ненулевое значение
-            }
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            this.value = value;
+            this.accountNumber = accountNumber;
         }
-    }
-
-    void showNumberOfAccounts() {
-        System.out.println(" Количество банковских счетов клиента = " +
-                clientAccounts.size());
-    }
-
-    List<Integer> getListOfAccounts() {
-        return new ArrayList<Integer>(clientAccounts.keySet());
     }
 
     @Override
-    public boolean equals(Object anotherAccount) {
-        if (this == anotherAccount) return true;
-        if (anotherAccount == null || getClass() != anotherAccount.getClass()) return false;
-        Account account = (Account) anotherAccount;
-        return clientAccounts.equals(account.clientAccounts);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return accountNumber == account.accountNumber && value == account.value;
     }
-
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientAccounts);
+        return Objects.hash(accountNumber, value);
     }
 
     @Override
     public String toString() {
-        return "Account{" +
-                "clientAccounts=" + clientAccounts +
-                '}';
+        return "Счёт номер - " + accountNumber +
+                ", состояние счёта = " + value +
+                '}'+
+                " ";
     }
 }
