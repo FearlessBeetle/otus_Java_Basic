@@ -55,9 +55,7 @@
     <script>
         function addNewStudent() {
             const studentBirthDate = document.getElementById("studentBirthDateId").value;
-            const studentAge = Math.floor(
-                (new Date() - new Date(studentBirthDate))
-                / 1000 / 60 / 60 / 24 / 365);
+            const studentAge = getAge(studentBirthDate);
             const studentName = document.getElementById("studentNameId").value;
             const studentSex = document.getElementById("sexId").value;
             const birthDateString = studentBirthDate.toString();
@@ -73,8 +71,9 @@
                 td3, birthDateString,
                 td4, studentAgeString )
             createRow(row, td1,td2,td3,td4);
-            calculateAverageAge(studentAge);
-            tbody.appendChild(row);
+            if (calculateAverageAge(studentAge)) {
+                tbody.appendChild(row);
+            }
         }
 
         function createCell() {
@@ -106,14 +105,36 @@
             if (isNaN(studentAge)) {
                 document.getElementById("studentsCounterId").innerHTML = (counterOfStudents - 1);
                 alert("student dont have age value");
+                return false;
             } else if (counterOfStudents == 1) {
                 document.getElementById("averageAgeId").innerHTML = studentAge;
                 document.getElementById("studentsSumAgeId").innerHTML = sumAge + studentAge;
+                return true;
             } else {
                 document.getElementById("studentsSumAgeId").innerHTML = sumAge + studentAge;
                 sumAge += studentAge;
                 document.getElementById("averageAgeId").innerHTML = (sumAge / counterOfStudents);
+                return true;
             }
+        }
+
+        function isLeapYear(year) {
+            const february = new Date(year, 1, 28);
+            february.setDate(february.getDate() + 1);
+            return february.getMonth() == 1;
+        }
+
+        function getAge(birthDate) {
+            const age = new Date(birthDate),
+                now = new Date();
+            let years = now.getFullYear() - age.getFullYear();
+            age.setFullYear(age.getFullYear() + years);
+            if (age > now) {
+                years--;
+                age.setFullYear(age.getFullYear() - 1);
+            }
+            const days = (now.getTime() - age.getTime()) / (3600 * 24 * 1000);
+            return Math.floor(years + days / (isLeapYear(now.getFullYear()) ? 366 : 365));
         }
     </script>
 
