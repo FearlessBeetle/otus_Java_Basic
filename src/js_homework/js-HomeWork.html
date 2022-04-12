@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Домашнее задание</title>
+    <style>
+        h1 {
+            color: black;
+        }
+
+        .required_data {
+            width: 400px;
+            border: 1px solid steelblue;
+            margin-left: 5px;
+            text-align: left;
+        }
+
+        .students_tab {
+            border: 1px solid steelblue;
+            width: 500px;
+            border-collapse: collapse;
+            margin-left: 5px;
+            margin-bottom: 50px;
+        }
+
+        .label {
+            margin-left: 10px;
+        }
+
+        .table_cell {
+            width: 100px;
+        }
+
+        #studentNameId {
+            margin-left: 10px;
+            border: 1px solid steelblue;
+        }
+
+        #studentBirthDateId {
+            border: 1px solid steelblue;
+            width: 232px
+        }
+
+        #sexId {
+            margin-left: 75px;
+            border: 1px solid steelblue;
+            width: 235px
+        }
+
+        #addButton {
+            margin-left: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script>
+        function addNewStudent() {
+            const studentBirthDate = document.getElementById("studentBirthDateId").value;
+            const studentAge = getAge(studentBirthDate);
+            const studentName = document.getElementById("studentNameId").value;
+            const studentSex = document.getElementById("sexId").value;
+            const birthDateString = studentBirthDate.toString();
+            const studentAgeString = studentAge.toString();
+            const tbody = document.getElementById("studentsTable").getElementsByTagName("tbody")[0];
+            const row = document.createElement("tr");
+            const td1 = createCell();
+            const td2 = createCell();
+            const td3 = createCell();
+            const td4 = createCell();
+            fillCell(td1,studentName,
+                td2, studentSex,
+                td3, birthDateString,
+                td4, studentAgeString )
+            createRow(row, td1,td2,td3,td4);
+            if (calculateAverageAge(studentAge)) {
+                tbody.appendChild(row);
+            }
+        }
+
+        function createCell() {
+            return document.createElement("td");
+        }
+
+        function fillCell(currentCell, currentValue){
+            if (arguments.length % 2 === 0) {
+                for (let i = 0; i < arguments.length; i += 2) {
+                    arguments[i].appendChild(
+                        document.createTextNode(arguments[i + 1]));
+                }
+            } else throw "odd value"
+
+        }
+
+        function createRow(currentRow,currentCell) {
+                for (let i = 1; i < arguments.length; i++) {
+                    currentRow.appendChild(arguments[i]);
+                }
+        }
+
+        function calculateAverageAge(studentAge) {
+            let counterOfStudents = (parseInt(
+                document.getElementById("studentsCounterId").innerHTML) + 1);
+            document.getElementById("studentsCounterId").innerHTML = (counterOfStudents);
+            let sumAge = parseInt(
+                document.getElementById("studentsSumAgeId").innerHTML);
+            if (isNaN(studentAge)) {
+                document.getElementById("studentsCounterId").innerHTML = (counterOfStudents - 1);
+                alert("student dont have age value");
+                return false;
+            } else if (counterOfStudents == 1) {
+                document.getElementById("averageAgeId").innerHTML = studentAge;
+                document.getElementById("studentsSumAgeId").innerHTML = sumAge + studentAge;
+                return true;
+            } else {
+                document.getElementById("studentsSumAgeId").innerHTML = sumAge + studentAge;
+                sumAge += studentAge;
+                document.getElementById("averageAgeId").innerHTML = (sumAge / counterOfStudents);
+                return true;
+            }
+        }
+
+        function isLeapYear(year) {
+            const february = new Date(year, 1, 28);
+            february.setDate(february.getDate() + 1);
+            return february.getMonth() == 1;
+        }
+
+        function getAge(birthDate) {
+            const age = new Date(birthDate),
+                now = new Date();
+            let years = now.getFullYear() - age.getFullYear();
+            age.setFullYear(age.getFullYear() + years);
+            if (age > now) {
+                years--;
+                age.setFullYear(age.getFullYear() - 1);
+            }
+            const days = (now.getTime() - age.getTime()) / (3600 * 24 * 1000);
+            return Math.floor(years + days / (isLeapYear(now.getFullYear()) ? 366 : 365));
+        }
+    </script>
+
+</head>
+<body>
+<h1>
+    Форма добавления информации о студенте
+</h1>
+<div class="required_data">
+    <p>
+        <label class="label" for="studentNameId">Имя студента :</label>
+        <input id="studentNameId" type="text" size="30" required>
+    </p>
+    <p>
+        <label class="label" for="studentBirthDateId">Дата рождения :</label>
+        <input id="studentBirthDateId" type="date" required>
+    </p>
+    <p>
+        <label class="label" for="sexId">Пол :</label>
+        <select id="sexId" required>
+            <option value="Мужчина">Мужчина</option>
+            <option value="Женщина">Женщина</option>
+        </select>
+    </p>
+    <button id="addButton" onclick="addNewStudent()"> Добавить</button>
+</div>
+<h1>
+    Таблица студентов
+</h1>
+
+<table id="studentsTable" class="students_tab" cellpadding="5" border="1">
+    <thead>
+    <tr>
+        <td class="table_cell">Имя студента</td>
+        <td class="table_cell">Пол</td>
+        <td class="table_cell">Дата рождения</td>
+        <td class="table_cell">Возраст</td>
+    </tr>
+    </thead>
+    <tbody id="input_table">
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="4" >&nbsp;</td>
+        <td id="studentsCounterId" colspan="4" >0</td>
+        <td id="studentsSumAgeId" colspan="3" >0</td>
+    </tr>
+    <tr>
+        <td class="table_cell" colspan="3">Средний возраст студентов</td>
+        <td class="table_cell" id="averageAgeId">0</td>
+    </tr>
+    </tfoot>
+</table>
+
+</body>
+</html>
